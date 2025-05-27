@@ -8,55 +8,60 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class MainController {
+
+    // Atributos que representam a janela principal (Stage) e o conteúdo dela (Scene)
     private Stage stage;
     private Scene cena;
 
-
+    // Construtor da classe que recebe a janela principal e armazena na variável de instância
     public MainController(Stage stage) {
         this.stage = stage;
     }
 
+    // Metodo chamado para exibir a interface dessa tela
     public void mostrar() {
-        criarUI();
-        this.stage.show();
+        criarUI();        // Cria os elementos visuais da interface
+        this.stage.show(); // Exibe a janela
     }
 
-
-
+    // Metodo responsável por criar toda a interface gráfica da janela principal
     public void criarUI() {
-        stage.setTitle("Janela Main");
+        stage.setTitle("Janela Main"); // Define o título da janela
 
+        // Cria um layout vertical para empilhar os elementos (VBox)
         VBox layout = new VBox();
-        //colcando css para conf layout
-        layout.setStyle("-fx-padding: 20; -fx-alignment: center;");
-        layout.setSpacing(30); // intervalo entre os componentes do layuot
-        // label para mostrar um texto
-        Label labelMensagem = new Label("Exemplo de janelas modais");
-        labelMensagem.setFont(new Font("Arial", 26));
-        layout.getChildren().add(labelMensagem);
 
-        // Abre um modal
+        // Aplica estilo CSS diretamente: padding (espaço interno) e alinhamento ao centro
+        layout.setStyle("-fx-padding: 20; -fx-alignment: center;");
+        layout.setSpacing(30); // Espaçamento vertical entre os componentes do VBox
+
+        // Cria um rótulo (Label) com texto explicativo
+        Label labelMensagem = new Label("Exemplo de janelas modais");
+        labelMensagem.setFont(new Font("Arial", 26)); // Define a fonte e o tamanho do texto
+        layout.getChildren().add(labelMensagem); // Adiciona o rótulo ao layout
+
+        // Cria um botão para abrir uma janela modal
         Button btn1 = new Button("Mostrar Modal");
         btn1.setOnAction(e -> {
+            // Ao clicar, cria e mostra uma nova janela modal usando ModalController
             ModalController modal = new ModalController(this.stage);
             modal.mostrar();
         });
-        layout.getChildren().add(btn1);
+        layout.getChildren().add(btn1); // Adiciona o botão ao layout
 
-        //Redireciona para pagina Home
+        // Cria um segundo botão que redireciona para a tela "Home"
         Button btnHome = new Button("Login: Ir para Home");
         btnHome.setOnAction(e -> {
-            //Abre o controlador que
+            // Ao clicar, cria um novo HomeController e exibe a tela Home
             HomeController home = new HomeController(this.stage);
             home.mostrar();
         });
-        layout.getChildren().add(btnHome);
+        layout.getChildren().add(btnHome); // Adiciona o botão ao layout
 
+        // Cria uma nova cena com o layout definido e tamanho 800x500 pixels
+        this.cena = new Scene(layout, 800, 500);
 
-        //Tamanho da pagina
-        this.cena = new Scene(layout, 800, 500 );
+        // Define essa cena como a atual do palco (janela principal)
         this.stage.setScene(this.cena);
     }
-
-
 }
