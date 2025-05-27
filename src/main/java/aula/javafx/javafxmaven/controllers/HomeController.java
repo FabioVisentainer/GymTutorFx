@@ -55,8 +55,8 @@ public class HomeController {
         // Define a ação ao clicar no botão
         btnVideos.setOnAction(e -> {
             //Abre o controlador que
-            HomeController home = new HomeController(this.stage);
-            home.mostrar();
+            VideoController video = new VideoController(this.stage);
+            video.mostrar();
         });
         // Adiciona o botão "Cadastrar Vídeos" ao layout
         layout.getChildren().add(btnVideos);
