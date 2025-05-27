@@ -1,4 +1,4 @@
-package aula.javafx.javafxmaven;
+package aula.javafx.javafxmaven.persistencia;
 
 import javafx.application.Application;
 import javafx.geometry.Pos;
