@@ -31,16 +31,26 @@ public class HomeController {
         Label titulo = new Label("Bem-vindo à Tela Home");
         titulo.setFont(new Font("Arial", 26));
 
-        Button btnCadastrar = new Button("Cadastrar Atividades");
-        btnCadastrar.setFont(new Font("Arial", 18));
-
-        // Aqui você pode definir o que acontece ao clicar no botão
-        btnCadastrar.setOnAction(e -> {
-            System.out.println("Botão 'Cadastrar Atividades' clicado!");
-            // Aqui você pode abrir outra janela, ou mudar a cena, etc.
+        //Redireciona para pagina Home
+        Button btnAtividades = new Button("Cadastrar Atividades");
+        btnAtividades.setFont(new Font("Arial", 18));
+        btnAtividades.setOnAction(e -> {
+            //Abre o controlador que
+            HomeController home = new HomeController(this.stage);
+            home.mostrar();
         });
+        layout.getChildren().add(btnAtividades);
 
-        layout.getChildren().addAll(titulo, btnCadastrar);
+        //Redireciona para pagina Home
+        Button btnVideos = new Button("Cadastrar Vídeos");
+        btnVideos.setFont(new Font("Arial", 18));
+        btnVideos.setOnAction(e -> {
+            //Abre o controlador que
+            HomeController home = new HomeController(this.stage);
+            home.mostrar();
+        });
+        layout.getChildren().add(btnVideos);
+
 
         this.cena = new Scene(layout, 800, 500);
         this.stage.setScene(this.cena);
