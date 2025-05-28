@@ -1,5 +1,6 @@
 package aula.javafx.javafxmaven.controllers;
 
+import aula.javafx.javafxmaven.models.Atividade;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -43,7 +44,7 @@ public class HomeController {
         // Define a ação ao clicar no botão
         btnAtividades.setOnAction(e -> {
             //Abre o controlador que
-            HomeController home = new HomeController(this.stage);
+            AtividadesController home = new AtividadesController(this.stage);
             home.mostrar();
         });
         // Adiciona o botão "Cadastrar Atividades" ao layout

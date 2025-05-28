@@ -10,4 +10,6 @@ module aula.javafx.javafxmaven {
     opens aula.javafx.javafxmaven.controllers to javafx.fxml;
     exports aula.javafx.javafxmaven.persistencia;
     opens aula.javafx.javafxmaven.persistencia to javafx.fxml;
+    exports aula.javafx.javafxmaven.models;
+    opens aula.javafx.javafxmaven.models to javafx.fxml;
 }

@@ -36,21 +36,13 @@ public class MainController {
         layout.setSpacing(30); // Espaçamento vertical entre os componentes do VBox
 
         // Cria um rótulo (Label) com texto explicativo
-        Label labelMensagem = new Label("Exemplo de janelas modais");
+        Label labelMensagem = new Label("Bem vindo ao cadastro de atividades e videos");
         labelMensagem.setFont(new Font("Arial", 26)); // Define a fonte e o tamanho do texto
         layout.getChildren().add(labelMensagem); // Adiciona o rótulo ao layout
 
-        // Cria um botão para abrir uma janela modal
-        Button btn1 = new Button("Mostrar Modal");
-        btn1.setOnAction(e -> {
-            // Ao clicar, cria e mostra uma nova janela modal usando ModalController
-            ModalController modal = new ModalController(this.stage);
-            modal.mostrar();
-        });
-        layout.getChildren().add(btn1); // Adiciona o botão ao layout
 
         // Cria um segundo botão que redireciona para a tela "Home"
-        Button btnHome = new Button("Login: Ir para Home");
+        Button btnHome = new Button("Home");
         btnHome.setOnAction(e -> {
             // Ao clicar, cria um novo HomeController e exibe a tela Home
             HomeController home = new HomeController(this.stage);
