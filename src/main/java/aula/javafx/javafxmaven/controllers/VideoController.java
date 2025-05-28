@@ -1,11 +1,13 @@
 package aula.javafx.javafxmaven.controllers;
 
+import aula.javafx.javafxmaven.models.Atividade;
 import aula.javafx.javafxmaven.models.Video;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -13,19 +15,18 @@ import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class VideoController {
 
     // Janela principal
     private final Stage stage;
-
     // Arquivo onde os vídeos serão salvos (serialização)
     private final File arquivo = new File("videos.dat");
-
     // Lista observável que alimenta a Tabela
     private final ObservableList<Video> listaVideos = FXCollections.observableArrayList();
-
     // Tabela que será exibida na tela
     private TableView<Video> tabela;
 
@@ -41,70 +42,94 @@ public class VideoController {
 
     // Cria a interface gráfica da janela principal
     private void criarUI() {
-        // Define o título da janela principal
-        stage.setTitle("Cadastro de Vídeos");
+        stage.setTitle("Cadastro de Vídeos");       // Define o título da janela principal
 
         // Cria um layout vertical (VBox) para organizar os componentes em coluna
         VBox layout = new VBox();
-        // Aplica estilo CSS para espaçamento interno (padding) e centralização dos elementos
-        layout.setStyle("-fx-padding: 20; -fx-alignment: center;");
-        // Define o espaçamento vertical entre os elementos do VBox
-        layout.setSpacing(20);
+        layout.setStyle("-fx-padding: 20; -fx-alignment: center;"); // Aplica estilo CSS para espaçamento interno (padding) e centralização dos elementos
+        layout.setSpacing(20); // Define o espaçamento vertical entre os elementos do VBox
 
         // Cria um título para a tela com fonte Arial tamanho 26
         Label titulo = new Label("Cadastro de Vídeos");
         titulo.setFont(new Font("Arial", 26));
 
+        // Cria um botão chamado "Voltar Home"
+        Button btnVoltar = new Button("Voltar a Home");
+        btnVoltar.setFont(new Font("Arial", 9)); // Define a fonte do botão
+        // Define a ação ao clicar no botão
+        btnVoltar.setOnAction(e -> {
+            //Abre o controlador que
+            HomeController home = new HomeController(this.stage);
+            home.mostrar();
+        });
+        HBox topo = new HBox(btnVoltar); // Cria um HBox para alinhar o botão à esquerda
+        topo.setStyle("-fx-alignment: top-left;");
+        topo.setSpacing(10);
+        layout.getChildren().add(topo); // Adiciona o botão ao layout
+
         // Cria um botão para adicionar novos vídeos
         Button btnAdicionar = new Button("Adicionar Vídeo");
         btnAdicionar.setFont(new Font("Arial", 18));
-        // Configura ação do botão para abrir o formulário modal de cadastro
-        btnAdicionar.setOnAction(e -> abrirFormulario());
+        btnAdicionar.setOnAction(e -> abrirFormulario()); // Configura ação do botão para abrir o formulário modal de cadastro
 
         // Inicializa a tabela que exibirá os vídeos
         tabela = new TableView<>();
-        // Vincula a tabela à lista observável de vídeos para exibir os dados
-        tabela.setItems(listaVideos);
-        // Define altura preferencial da tabela para 300 pixels
-        tabela.setPrefHeight(300);
-        // Ajusta automaticamente a largura das colunas para preencher a tabela (sem colunas extras)
-        tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        // Remove o botão de menu de colunas (que permite ocultar/exibir colunas)
-        tabela.setTableMenuButtonVisible(false);
+        tabela.setItems(listaVideos); // Vincula a tabela à lista observável de vídeos para exibir os dados
+        tabela.setPrefHeight(300); // Define altura preferencial da tabela para 300 pixels
+        tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY); // Ajusta automaticamente a largura das colunas para preencher a tabela (sem colunas extras)
+        tabela.setTableMenuButtonVisible(false); // Remove o botão de menu de colunas (que permite ocultar/exibir colunas)
 
         // Cria a coluna "Nome" que exibirá o nome do vídeo
         TableColumn<Video, String> colNome = new TableColumn<>("Nome");
-        // Configura como a coluna vai obter o valor para cada célula (nome do vídeo)
-        colNome.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getNome()));
+        colNome.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getNome())); // Configura como a coluna vai obter o valor para cada célula (nome do vídeo)
 
         // Cria a coluna "Link" que exibirá o link do vídeo
         TableColumn<Video, String> colLink = new TableColumn<>("Link");
-        // Configura a coluna para obter o link do vídeo para cada célula
-        colLink.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getLink()));
+        colLink.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getLink())); // Configura a coluna para obter o link do vídeo para cada célula
+
+        // Cria a coluna "Data" que exibirá o link do vídeo
+        TableColumn<Video, String> colData = new TableColumn<>("Data de adição");
+        colData.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getDataDeAdicao())); // Configura a coluna para obter o link do vídeo para cada célula
+
+        TableColumn<Video, Void> colAcoes = new TableColumn<>("Ações");
+        colAcoes.setCellFactory(param -> new TableCell<>() {
+                    private final Button btnEditar = new Button("Editar");
+                    private final Button btnDeletar = new Button("Deletar");
+                    private final HBox hBox = new HBox(10, btnEditar, btnDeletar);
+
+                    {
+                        btnEditar.setOnAction(e -> {
+                            Video video = getTableView().getItems().get(getIndex());
+                            abrirFormularioEdicao(video);
+                        });
+
+                        btnDeletar.setOnAction(e -> {
+                            Video video = getTableView().getItems().get(getIndex());
+                            Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION, "Deseja realmente deletar?", ButtonType.YES, ButtonType.NO);
+                            confirmacao.showAndWait().ifPresent(resposta -> {
+                                if (resposta == ButtonType.YES) {
+                                    listaVideos.remove(video);
+                                    salvarVideos();
+                                }
+                            });
+                        });
+                    }
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(hBox);
+                }
+            }
+        });
 
         // Define as colunas visíveis da tabela, substituindo qualquer coluna anterior
-        // Isso evita que apareçam colunas "fantasmas" indesejadas
-        tabela.getColumns().setAll(colNome, colLink);
-
-        // Cria botão para editar o vídeo selecionado na tabela
-        Button btnEditar = new Button("Editar Selecionado");
-        btnEditar.setFont(new Font("Arial", 16));
-        // Define ação para abrir o formulário de edição do vídeo selecionado
-        btnEditar.setOnAction(e -> editarSelecionado());
-
-        // Cria botão para excluir o vídeo selecionado na tabela
-        Button btnExcluir = new Button("Excluir Selecionado");
-        btnExcluir.setFont(new Font("Arial", 16));
-        // Define ação para excluir o vídeo selecionado após confirmação
-        btnExcluir.setOnAction(e -> excluirSelecionado());
-
-        // Agrupa os botões de editar e excluir horizontalmente com espaçamento de 10 pixels
-        HBox botoesSecundarios = new HBox(10, btnEditar, btnExcluir);
-        // Centraliza os botões dentro do HBox
-        botoesSecundarios.setStyle("-fx-alignment: center;");
+        tabela.getColumns().addAll(colNome, colLink, colData, colAcoes);
 
         // Adiciona os componentes criados ao layout principal em ordem vertical
-        layout.getChildren().addAll(titulo, btnAdicionar, tabela, botoesSecundarios);
+        layout.getChildren().addAll(titulo, btnAdicionar, tabela);
 
         // Carrega a lista de vídeos previamente salva em arquivo para popular a tabela ao iniciar
         carregarVideos();
@@ -122,15 +147,17 @@ public class VideoController {
 
         VBox formLayout = new VBox(); // Layout vertical para organizar os campos
         formLayout.setStyle("-fx-padding: 20; -fx-alignment: center;"); // Espaçamento e centralização
-        formLayout.setSpacing(15); // Espaçamento entre os componentes
+        formLayout.setSpacing(25); // Espaçamento entre os componentes
 
         // Campo de texto para o nome do vídeo, com texto guia (placeholder)
         TextField campoNome = new TextField();
         campoNome.setPromptText("Nome do vídeo");
+        campoNome.setMaxWidth(300);
 
         // Campo de texto para o link do vídeo, com texto guia
         TextField campoLink = new TextField();
         campoLink.setPromptText("Link do vídeo");
+        campoNome.setMaxWidth(300);
 
         // Botão para salvar o novo vídeo
         Button btnSalvar = new Button("Salvar");
@@ -140,7 +167,10 @@ public class VideoController {
 
             // Verifica se os campos estão preenchidos e se o link é válido
             if (!nome.isEmpty() && !link.isEmpty() && linkValido(link)) {
-                Video video = new Video(nome, link); // Cria objeto Video
+                LocalDate dataAtual = LocalDate.now();
+                String dataFormatada = dataAtual.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+                Video video = new Video(nome, link, dataFormatada); // Cria objeto Video
                 listaVideos.add(video); // Adiciona vídeo na lista observável
                 salvarVideos(); // Salva a lista atualizada no arquivo
                 modal.close(); // Fecha o formulário modal
@@ -194,24 +224,20 @@ public class VideoController {
     }
 
     // Abre o formulário de edição do vídeo selecionado na tabela
-    private void editarSelecionado() {
-        Video selecionado = tabela.getSelectionModel().getSelectedItem(); // Obtém vídeo selecionado
-        if (selecionado == null) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Selecione um vídeo para editar.");
-            alert.showAndWait();
-            return; // Sai do método se nada estiver selecionado
-        }
-
+    private void abrirFormularioEdicao(Video video) {
         Stage modal = new Stage();
         modal.setTitle("Editar Vídeo");
 
         VBox formLayout = new VBox();
         formLayout.setStyle("-fx-padding: 20; -fx-alignment: center;");
-        formLayout.setSpacing(15);
+        formLayout.setSpacing(25);
 
         // Campos preenchidos com dados atuais do vídeo selecionado
-        TextField campoNome = new TextField(selecionado.getNome());
-        TextField campoLink = new TextField(selecionado.getLink());
+        TextField campoNome = new TextField(video.getNome());
+        campoNome.setMaxWidth(300);
+        TextField campoLink = new TextField(video.getLink());
+        campoLink.setMaxWidth(300);
+
 
         Button btnSalvar = new Button("Salvar Alterações");
         btnSalvar.setOnAction(e -> {
@@ -220,8 +246,8 @@ public class VideoController {
 
             // Verifica dados preenchidos e validade do link
             if (!novoNome.isEmpty() && !novoLink.isEmpty() && linkValido(novoLink)) {
-                selecionado.setNome(novoNome); // Atualiza nome
-                selecionado.setLink(novoLink); // Atualiza link
+                video.setNome(novoNome); // Atualiza nome
+                video.setLink(novoLink); // Atualiza link
                 tabela.refresh(); // Atualiza visualmente a tabela para refletir as mudanças
                 salvarVideos(); // Persiste alterações no arquivo
                 modal.close();
@@ -237,29 +263,9 @@ public class VideoController {
                 new Label("Link:"), campoLink,
                 btnSalvar
         );
-        modal.setScene(new Scene(formLayout, 300, 250));
+        modal.setScene(new Scene(formLayout, 450, 300));
         modal.initOwner(this.stage);
         modal.showAndWait();
-    }
-
-    // Remove o vídeo selecionado após confirmação do usuário
-    private void excluirSelecionado() {
-        Video selecionado = tabela.getSelectionModel().getSelectedItem();
-        if (selecionado == null) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Selecione um vídeo para excluir.");
-            alert.showAndWait();
-            return;
-        }
-
-        // Confirmação antes de excluir
-        Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION,
-                "Deseja realmente excluir este vídeo?", ButtonType.YES, ButtonType.NO);
-        confirmacao.showAndWait().ifPresent(resposta -> {
-            if (resposta == ButtonType.YES) {
-                listaVideos.remove(selecionado); // Remove da lista observável
-                salvarVideos(); // Atualiza o arquivo com a lista modificada
-            }
-        });
     }
 
     // Valida se uma string é uma URL válida

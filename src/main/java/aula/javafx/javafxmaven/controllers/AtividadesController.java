@@ -39,8 +39,22 @@ public class AtividadesController {
         layout.setStyle("-fx-padding: 20; -fx-alignment: center;");
         layout.setSpacing(20);
 
-        Label titulo = new Label("Cadastro de Imagens");
+        Label titulo = new Label("Cadastro de Atividades");
         titulo.setFont(new Font("Arial", 26));
+
+        // Cria um botão chamado "Voltar Home"
+        Button btnVoltar = new Button("Voltar a Home");
+        btnVoltar.setFont(new Font("Arial", 9)); // Define a fonte do botão
+        // Define a ação ao clicar no botão
+        btnVoltar.setOnAction(e -> {
+            //Abre o controlador que
+            HomeController home = new HomeController(this.stage);
+            home.mostrar();
+        });
+        HBox topo = new HBox(btnVoltar); // Cria um HBox para alinhar o botão à esquerda
+        topo.setStyle("-fx-alignment: top-left;");
+        topo.setSpacing(10);
+        layout.getChildren().add(topo); // Adiciona o botão ao layout
 
         // Botão para adicionar nova atividade
         Button btnAdicionar = new Button("Adicionar atividades");
