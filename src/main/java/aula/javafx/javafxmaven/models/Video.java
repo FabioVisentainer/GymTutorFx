@@ -1,6 +1,8 @@
 package aula.javafx.javafxmaven.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
 A interface Serializable em Java é usada para indicar que objetos de uma determinada classe podem ser convertidos em uma sequência de bytes,
@@ -28,4 +30,6 @@ public class Video implements Serializable {
     public void setNome(String nome) {this.nome = nome;}
     public void setLink(String link) {this.link = link;}
     public void setDataDeAdicao(String data) {this.dataDeAdicao = data;}
+
+
 }

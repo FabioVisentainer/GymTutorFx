@@ -50,17 +50,17 @@ public class HomeController {
         // Adiciona o botão "Cadastrar Atividades" ao layout
         layout.getChildren().add(btnAtividades);
 
-        // Cria um segundo botão chamado "Cadastrar Vídeos"
-        Button btnVideos = new Button("Cadastrar Vídeos");
-        btnVideos.setFont(new Font("Arial", 18)); // Define a fonte do botão
-        // Define a ação ao clicar no botão
-        btnVideos.setOnAction(e -> {
-            //Abre o controlador que
-            VideoController video = new VideoController(this.stage);
-            video.mostrar();
-        });
-        // Adiciona o botão "Cadastrar Vídeos" ao layout
-        layout.getChildren().add(btnVideos);
+//        // Cria um segundo botão chamado "Cadastrar Vídeos"
+//        Button btnVideos = new Button("Cadastrar Vídeos");
+//        btnVideos.setFont(new Font("Arial", 18)); // Define a fonte do botão
+//        // Define a ação ao clicar no botão
+//        btnVideos.setOnAction(e -> {
+//            //Abre o controlador que
+//            VideoController video = new VideoController(this.stage);
+//            video.mostrar();
+//        });
+//        // Adiciona o botão "Cadastrar Vídeos" ao layout
+//        layout.getChildren().add(btnVideos);
 
         // Cria uma nova cena com o layout e define o tamanho da janela
         this.cena = new Scene(layout, 800, 500);
