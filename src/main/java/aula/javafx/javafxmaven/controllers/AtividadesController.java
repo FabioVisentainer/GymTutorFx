@@ -1,6 +1,8 @@
 package aula.javafx.javafxmaven.controllers;
 
+import aula.javafx.javafxmaven.interfaces.CrudController;
 import aula.javafx.javafxmaven.models.Atividade;
+import aula.javafx.javafxmaven.models.Video;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -15,7 +17,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class AtividadesController {
+public class AtividadesController implements CrudController<Atividade> {
 
     private Stage stage;
     private final File arquivo = new File("atividades.dat");
@@ -32,7 +34,7 @@ public class AtividadesController {
         this.stage.show(); // Exibe a janela
     }
 
-    private void criarUI() {
+    public void criarUI() {
         stage.setTitle("Cadastro de Atividades");
 
         VBox layout = new VBox();
@@ -92,7 +94,7 @@ public class AtividadesController {
                             confirmacao.showAndWait().ifPresent(resposta -> {
                                 if (resposta == ButtonType.YES) {
                                     listaAtividades.remove(atividade);
-                                    salvarAtividades();
+                                    salvar();
                                 }
                             });
                         });
@@ -117,7 +119,7 @@ public class AtividadesController {
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         // Remove o botão de menu de colunas (que permite ocultar/exibir colunas)
 
-        carregarAtividades(); // Carrega os vídeos do arquivo
+        carregar(); // Carrega os vídeos do arquivo
 
         layout.getChildren().addAll(titulo, btnAdicionar, tabela);
 
@@ -126,7 +128,7 @@ public class AtividadesController {
     }
 
     // Abre o Modal com o formulário para adicionar vídeo
-    private void abrirFormulario() {
+    public void abrirFormulario() {
         Stage modal = new Stage();
         modal.setTitle("Nova atividade");
 
@@ -155,7 +157,7 @@ public class AtividadesController {
 
                 Atividade atividade = new Atividade(nome, descricao, dataFormatada);
                 listaAtividades.add(atividade);
-                salvarAtividades(); // Salva no arquivo
+                salvar(); // Salva no arquivo
                 modal.close();
             } else {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "Preencha todos os campos!");
@@ -172,7 +174,7 @@ public class AtividadesController {
     }
 
     // Serializa e salva os vídeos no arquivo
-    private void salvarAtividades() {
+    public void salvar() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(arquivo))) {
             oos.writeObject(listaAtividades.stream().toList());
         } catch (FileNotFoundException e) {
@@ -184,7 +186,7 @@ public class AtividadesController {
     }
 
     // Lê os vídeos salvos do arquivo
-    private void carregarAtividades() {
+    public void carregar() {
         if (arquivo.exists()) {
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(arquivo))) {
                 List<Atividade> atividades = (List<Atividade>) ois.readObject();
@@ -197,7 +199,7 @@ public class AtividadesController {
         }
     }
 
-    private void abrirFormularioEdicao(Atividade atividade) {
+    public void abrirFormularioEdicao(Atividade atividade) {
         Stage modal = new Stage();
         modal.setTitle("Editar atividade");
 
@@ -224,7 +226,7 @@ public class AtividadesController {
                 atividade.setNome(nome);
                 atividade.setDescricao(descricao);
                 tabela.refresh(); // Atualiza a tabela
-                salvarAtividades();
+                salvar();
                 modal.close();
             } else {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "Preencha todos os campos!");

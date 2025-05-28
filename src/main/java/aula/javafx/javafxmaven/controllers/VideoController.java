@@ -1,13 +1,12 @@
 package aula.javafx.javafxmaven.controllers;
 
-import aula.javafx.javafxmaven.models.Atividade;
+import aula.javafx.javafxmaven.interfaces.CrudController;
 import aula.javafx.javafxmaven.models.Video;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -19,7 +18,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class VideoController {
+public class VideoController implements CrudController<Video> {
 
     // Janela principal
     private final Stage stage;
@@ -41,7 +40,7 @@ public class VideoController {
     }
 
     // Cria a interface gráfica da janela principal
-    private void criarUI() {
+    public void criarUI() {
         stage.setTitle("Cadastro de Vídeos");       // Define o título da janela principal
 
         // Cria um layout vertical (VBox) para organizar os componentes em coluna
@@ -109,7 +108,7 @@ public class VideoController {
                             confirmacao.showAndWait().ifPresent(resposta -> {
                                 if (resposta == ButtonType.YES) {
                                     listaVideos.remove(video);
-                                    salvarVideos();
+                                    salvar();
                                 }
                             });
                         });
@@ -132,7 +131,7 @@ public class VideoController {
         layout.getChildren().addAll(titulo, btnAdicionar, tabela);
 
         // Carrega a lista de vídeos previamente salva em arquivo para popular a tabela ao iniciar
-        carregarVideos();
+        carregar();
 
         // Cria a cena principal com o layout e dimensões de 800x500 pixels
         Scene cena = new Scene(layout, 800, 500);
@@ -141,7 +140,7 @@ public class VideoController {
     }
 
     // Abre o formulário para adicionar um novo vídeo
-    private void abrirFormulario() {
+    public void abrirFormulario() {
         Stage modal = new Stage(); // Cria uma nova janela modal (pop-up)
         modal.setTitle("Novo Vídeo"); // Define o título da janela
 
@@ -172,7 +171,7 @@ public class VideoController {
 
                 Video video = new Video(nome, link, dataFormatada); // Cria objeto Video
                 listaVideos.add(video); // Adiciona vídeo na lista observável
-                salvarVideos(); // Salva a lista atualizada no arquivo
+                salvar(); // Salva a lista atualizada no arquivo
                 modal.close(); // Fecha o formulário modal
             } else {
                 // Exibe alerta de aviso caso os campos estejam inválidos ou incompletos
@@ -197,7 +196,7 @@ public class VideoController {
     }
 
     // Salva a lista de vídeos no arquivo como objeto serializado
-    private void salvarVideos() {
+    public void salvar() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(arquivo))) {
             // Converte a lista observável para lista comum e grava no arquivo
             oos.writeObject(listaVideos.stream().toList());
@@ -209,7 +208,7 @@ public class VideoController {
     }
 
     // Carrega os vídeos do arquivo, se existir, e popula a lista observável
-    private void carregarVideos() {
+    public void carregar() {
         if (arquivo.exists()) { // Verifica se o arquivo existe
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(arquivo))) {
                 // Lê a lista de vídeos do arquivo e atualiza a lista observável
@@ -224,7 +223,8 @@ public class VideoController {
     }
 
     // Abre o formulário de edição do vídeo selecionado na tabela
-    private void abrirFormularioEdicao(Video video) {
+    @Override
+    public void abrirFormularioEdicao(Video video) {
         Stage modal = new Stage();
         modal.setTitle("Editar Vídeo");
 
@@ -249,7 +249,7 @@ public class VideoController {
                 video.setNome(novoNome); // Atualiza nome
                 video.setLink(novoLink); // Atualiza link
                 tabela.refresh(); // Atualiza visualmente a tabela para refletir as mudanças
-                salvarVideos(); // Persiste alterações no arquivo
+                salvar(); // Persiste alterações no arquivo
                 modal.close();
             } else {
                 Alert alert = new Alert(Alert.AlertType.WARNING,
