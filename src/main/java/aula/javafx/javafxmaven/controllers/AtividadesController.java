@@ -220,19 +220,11 @@ public class AtividadesController {
 
     /* ============ Persistência ============ */
     public void salvar() {
-//        boolean arquivoExistiaAntes = arquivo.exists();
-
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(arquivo))) {
             oos.writeObject(listaAtividades.stream().toList());
-        } catch (FileNotFoundException ex) {
-            System.out.println("Arquivo não encontrado: " + ex.getMessage());
         } catch (IOException ex) {
-            throw new RuntimeException("Erro ao salvar os dados.", ex);
+            throw new RuntimeException(ex); // propagado para quem chamou
         }
-//
-//        if (!arquivoExistiaAntes) {
-//            throw new RuntimeException("Aviso: O arquivo de dados original foi perdido e um novo foi criado.");
-//        }
     }
 
     public void carregar() {
