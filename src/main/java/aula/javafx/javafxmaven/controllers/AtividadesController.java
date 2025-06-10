@@ -11,6 +11,9 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.nio.channels.FileChannel;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -220,10 +223,25 @@ public class AtividadesController {
 
     /* ============ Persistência ============ */
     public void salvar() {
+        try {
+            FileChannel.open(arquivo.toPath(), StandardOpenOption.WRITE).close();
+            salvarDados();
+        } catch (NoSuchFileException | FileNotFoundException e) {
+            System.out.println("Arquivo não encontrado. Criando novo arquivo...");
+            try {
+                salvarDados();
+                System.out.println("Arquivo criado com sucesso.");
+            } catch (IOException ex) {
+                mostrarErro("Erro ao salvar os dados após criar o arquivo.", ex);
+            }
+        } catch (IOException e) {
+            mostrarErro("Erro ao acessar o arquivo.", e);
+        }
+    }
+
+    private void salvarDados() throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(arquivo))) {
             oos.writeObject(listaAtividades.stream().toList());
-        } catch (IOException ex) {
-            throw new RuntimeException(ex); // propagado para quem chamou
         }
     }
 
@@ -248,3 +266,4 @@ public class AtividadesController {
         a.showAndWait();
     }
 }
+
