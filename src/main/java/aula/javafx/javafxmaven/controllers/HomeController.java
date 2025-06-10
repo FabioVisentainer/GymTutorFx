@@ -35,8 +35,11 @@ public class HomeController {
         layout.setSpacing(30); // Espaçamento vertical entre os componentes
 
         // Cria um rótulo de título
-        Label titulo = new Label("Bem-vindo à Tela Home");
-        titulo.setFont(new Font("Arial", 26)); // Define a fonte e tamanho do texto
+        // Cria um rótulo (Label) com texto explicativo
+        Label labelMensagem = new Label("Bem vindo ao cadastro de atividades e videos");
+        labelMensagem.setFont(new Font("Arial", 26)); // Define a fonte e o tamanho do texto
+        layout.getChildren().add(labelMensagem); // Adiciona o rótulo ao layout
+
 
         // Cria um botão chamado "Cadastrar Atividades"
         Button btnAtividades = new Button("Cadastrar Atividades");

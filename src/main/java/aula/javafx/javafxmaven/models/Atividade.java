@@ -8,6 +8,8 @@ public class Atividade implements Serializable {
     private String nome;
     private String descricao;
     private String dataDeAdicao;
+    private List<Video> videos = new ArrayList<>();
+
 
     public Atividade() {
     }
@@ -38,7 +40,6 @@ public class Atividade implements Serializable {
     }
 
     // Lista de videos pertencentes a atividade
-    private List<Video> videos = new ArrayList<>();
     public List<Video> getVideos() {return videos;}
     public void setVideos(List<Video> videos) {this.videos = videos;}
     public void adicionarVideo(Video video) {this.videos.add(video);}
