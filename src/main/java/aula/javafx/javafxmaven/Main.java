@@ -1,7 +1,8 @@
 package aula.javafx.javafxmaven;
 
-import aula.javafx.javafxmaven.controllers.MainController;
+import aula.javafx.javafxmaven.controllers.HomeController;
 import javafx.application.Application;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -12,8 +13,15 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        MainController m = new MainController(stage);
-        m.mostrar();
+        try {
+            HomeController m = new HomeController(stage);
+            m.mostrar();
+        }catch (Exception ex){
+            Alert a = new Alert(Alert.AlertType.ERROR,  "Ocorreu um erro inesperado ao iniciar a aplicação!");
+            a.setHeaderText("Erro");
+            a.showAndWait();
+        }
+
     }
 
 }
